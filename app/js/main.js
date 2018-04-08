@@ -3,6 +3,8 @@ import * as THREE from 'three';
 // const OrbitControls = orbit(THREE);
 import TrackballControls from 'three-trackballcontrols';
 import Ghost from './models/Ghost';
+import Lighthouse from './models/Lighthouse';
+import Mailbox from './models/Mailbox';
 
 export default class App {
   constructor() {
@@ -21,9 +23,12 @@ export default class App {
     this.tracker.noZoom = false;
     this.tracker.noPan = false;
 
-    this.ghost = new Ghost(0xd03e19);
-    this.ghost.matrixAutoUpdate = false;
-    this.scene.add(this.ghost);
+    // this.ghost = new Ghost(0x505050);
+    // this.ghost.matrixAutoUpdate = false;
+    // this.scene.add(this.ghost);
+
+    this.lighthouse = new Lighthouse();
+    this.scene.add(this.lighthouse);
 
     const lightOne = new THREE.DirectionalLight(0xffffff, 1.0);
     lightOne.position.set(10, 40, 100);
@@ -43,7 +48,7 @@ export default class App {
     this.renderer.render(this.scene, this.camera);
     this.tracker.update();
 
-    this.ghost.matrix.multiply (this.rotY1);
+    // this.ghost.matrix.multiply (this.rotY1);
 
     requestAnimationFrame(() => this.render());
   }
