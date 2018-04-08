@@ -24,5 +24,7 @@ export default class Lighthouse extends Group {
             support.translateZ(LIGHTHOUSE_TOP - SUPPORT_SIZE);
             this.add(support);
         }
+
+         
     }
 }
