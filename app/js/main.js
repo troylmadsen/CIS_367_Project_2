@@ -43,14 +43,20 @@ export default class App {
 
     // Adding the boat
     this.boat = new Boat();
+    this.boat.matrixAutoUpdate = false;
+    this.boat.matrix.multiply( new THREE.Matrix4().makeTranslation(20, -22, 20) );
     this.scene.add(this.boat);
-    this.boat.position.x = 20;
+    this.rotateBoatY = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(5));
+    this.newPositionBoat = new THREE.Matrix4().makeTranslation(0, 0, 0.5);
+
+    // Boat Propeller Matrix Transform
+    this.rotatePropellerX = new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(10));
 
     // Adding the placement grid
     this.placementgrid = new PlacementGrid();
     this.placementgrid.rotateX(Math.PI / 2);
     this.scene.add(this.placementgrid);
-    this.placementgrid.position.y = -30;
+    this.placementgrid.position.y = -25;
 
     window.addEventListener('resize', () => this.resizeHandler());
     this.resizeHandler();
@@ -60,6 +66,15 @@ export default class App {
   render() {
     this.renderer.render(this.scene, this.camera);
     this.tracker.update();
+
+    // Rotates the Boat
+    this.boat.matrix.multiply (this.rotateBoatY);
+
+    // Positions the Boat
+    this.boat.matrix.multiply (this.newPositionBoat);
+
+    // Rotates the Propeller
+    this.boat.render();
 
     // this.ghost.matrix.multiply (this.rotY1);
 
