@@ -4,6 +4,8 @@ import * as THREE from 'three';
 import TrackballControls from 'three-trackballcontrols';
 import Ghost from './models/Ghost';
 import Lighthouse from './models/Lighthouse';
+import Boat from './models/Boat';
+import PlacementGrid from './models/PlacementGrid';
 import Mailbox from './models/Mailbox';
 
 export default class App {
@@ -38,6 +40,17 @@ export default class App {
     this.scene.add(ambientLight);
 
     this.rotY1 = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(1));
+
+    // Adding the boat
+    this.boat = new Boat();
+    this.scene.add(this.boat);
+    this.boat.position.x = 20;
+
+    // Adding the placement grid
+    this.placementgrid = new PlacementGrid();
+    this.placementgrid.rotateX(Math.PI / 2);
+    this.scene.add(this.placementgrid);
+    this.placementgrid.position.y = -30;
 
     window.addEventListener('resize', () => this.resizeHandler());
     this.resizeHandler();
