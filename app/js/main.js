@@ -41,22 +41,23 @@ export default class App {
 
     this.rotY1 = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(1));
 
-    // Adding the boat
+    // Adding the boat.
     this.boat = new Boat();
     this.boat.matrixAutoUpdate = false;
-    this.boat.matrix.multiply( new THREE.Matrix4().makeTranslation(20, -22, 20) );
+    this.boat.matrix.setPosition(new THREE.Vector3(20, -22, 30));
     this.scene.add(this.boat);
-    this.rotateBoatY = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(5));
-    this.newPositionBoat = new THREE.Matrix4().makeTranslation(0, 0, 0.5);
+    // this.rotateBoatY = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(5));
+    // this.newPositionBoat = new THREE.Matrix4().makeTranslation(20, -22, 30);
 
-    // Boat Propeller Matrix Transform
-    this.rotatePropellerX = new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(10));
-
-    // Adding the placement grid
+    // Adding the placement grid.
     this.placementgrid = new PlacementGrid();
     this.placementgrid.rotateX(Math.PI / 2);
     this.scene.add(this.placementgrid);
     this.placementgrid.position.y = -25;
+
+    // Use real-time to aid boat circuit.
+    this.initialMilliseconds = (new Date()).getTime();
+    this.cycleTotalMilliseconds = 5000;
 
     window.addEventListener('resize', () => this.resizeHandler());
     this.resizeHandler();
@@ -67,14 +68,25 @@ export default class App {
     this.renderer.render(this.scene, this.camera);
     this.tracker.update();
 
-    // Rotates the Boat
-    this.boat.matrix.multiply (this.rotateBoatY);
+    // Rotates the Boat. Old.
+    // this.boat.matrix.multiply (this.rotateBoatY);
 
-    // Positions the Boat
-    this.boat.matrix.multiply (this.newPositionBoat);
+    // Positions the Boat. Old.
+    // this.boat.matrix.multiply (this.newPositionBoat);
 
     // Rotates the Propeller
     this.boat.render();
+
+    // Controlling the position of the boat to a cycle.
+    let newMilliSecondTime = (new Date()).getTime();
+    var timeDifference = newMilliSecondTime - this.initialMilliseconds;
+    timeDifference = timeDifference % this.cycleTotalMilliseconds;
+    let timePercentage = timeDifference / this.cycleTotalMilliseconds;
+
+    // Use timePercentage as the "S" value in a parametric equation to get
+    // new values for X and Y
+    this.boat.matrix.setPosition(new THREE.Vector3(20, -22, 30 * timePercentage));
+
 
     // this.ghost.matrix.multiply (this.rotY1);
 

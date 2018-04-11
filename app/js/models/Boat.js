@@ -7,7 +7,7 @@ export default class Boat extends Group {
         super()
 
         // Setting Size Variables
-        var height = 1.3;
+        var height = 0.8;
         var width = 4;
         var depth = 10;
         var scaling = 1;
@@ -21,15 +21,13 @@ export default class Boat extends Group {
         var cube = new Mesh( geometry, material );
         this.add( cube );
 
-        var geometry = new BoxGeometry( 3, 2, 2 );
-        var material = new MeshPhongMaterial( {color: 0x991111} );
+        // Adding the Propeller
+        var geometry = new BoxGeometry( 6, 1.5, .6);
+        var material = new MeshPhongMaterial( {color: 0xEE6666} );
         this.propeller = new Mesh( geometry, material );
-        this.propeller.translateY(3);
+        this.propeller.translateY(-.5);
+        this.propeller.translateZ((-5 - 0.3));
         this.add( this.propeller );
-
-      // Boat Propeller Matrix Transform
-      this.rotatePropellerX = new THREE.Matrix4().makeRotationX(THREE.Math.degToRad(10));
-
     }
 
     render() {
