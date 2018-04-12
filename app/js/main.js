@@ -26,32 +26,17 @@ export default class App {
     this.tracker.noZoom = false;
     this.tracker.noPan = false;
 
-    //FIXME replace this with boat
-    // this.boat_deg = 0;
-    // this.deg_change_rate = 2 * Math.PI / 2000;
+    // //FIXME remove this
+    // const marker1 = new THREE.Mesh(new THREE.CylinderGeometry(50, 50, 1), new THREE.MeshPhongMaterial({color: 0x0000ff}));
+    // marker1.rotateX(Math.PI / 2);
+    // marker1.translateY(50);
+    // this.scene.add(marker1);
     //
-    // var boatGeom = new BoxGeometry(5, 5, 10);
-    // var boatMatr = new MeshPhongMaterial({color: 0x00ff00});
-    // this.boat = new Mesh(boatGeom, boatMatr);
-    // this.boat.matrixAutoUpdate = false;
-    // var offset = new Matrix4().makeTranslation(0, 0, 20);
-    // this.boat.matrix.multiply(offset);
-    // this.scene.add(this.boat);
-    // this.ghost = new Ghost(0x505050);
-    // this.ghost.matrixAutoUpdate = false;
-    // this.scene.add(this.ghost);
-
-    //FIXME remove this
-    const marker1 = new THREE.Mesh(new THREE.CylinderGeometry(50, 50, 1), new THREE.MeshPhongMaterial({color: 0x0000ff}));
-    marker1.rotateX(Math.PI / 2);
-    marker1.translateY(50);
-    this.scene.add(marker1);
-
-    //FIXME remove this
-    const marker2 = new THREE.Mesh(new THREE.CylinderGeometry(50, 50, 1), new THREE.MeshPhongMaterial({color: 0x0000ff}));
-    marker2.rotateX(Math.PI / 2);
-    marker2.translateY(-50);
-    this.scene.add(marker2);
+    // //FIXME remove this
+    // const marker2 = new THREE.Mesh(new THREE.CylinderGeometry(50, 50, 1), new THREE.MeshPhongMaterial({color: 0x0000ff}));
+    // marker2.rotateX(Math.PI / 2);
+    // marker2.translateY(-50);
+    // this.scene.add(marker2);
 
     const skyboxGeom = new THREE.SphereGeometry(100, 32, 32);
     const skyboxMatr = new MeshPhongMaterial({color: 0xff00ff, side: THREE.BackSide});
@@ -59,21 +44,21 @@ export default class App {
     this.scene.add(skybox);
 
     this.lighthouse = new Lighthouse();
+    this.lighthouse.lamp.matrixAutoUpdate = false;
+    //FIXME uncomment
     this.scene.add(this.lighthouse);
 
-    const lightOne = new THREE.DirectionalLight(0xffffff, 1.0);
-    lightOne.position.set(10, 40, 100);
-    this.scene.add(lightOne);
+    this.lightOne = new THREE.DirectionalLight(0xffffff, 1.0);
+    this.lightOne.position.set(10, 40, 100);
+    this.scene.add(this.lightOne);
 
     const ambientLight = new THREE.AmbientLight(0x404040);
     this.scene.add(ambientLight);
 
-    // this.rotY1 = new Matrix4().makeRotationY(THREE.Math.degToRad(1));
-
     // Adding the boat.
-    this.boat = new Boat();
+    this.boat = new Boat(1);
     this.boat.matrixAutoUpdate = false;
-    this.boat.matrix.setPosition(new THREE.Vector3(42, -24, -50));
+    // this.boat.matrix.setPosition(new THREE.Vector3(42, -24, -50));
     this.scene.add(this.boat);
 
     // this.rotateBoatY = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(5));
@@ -90,6 +75,8 @@ export default class App {
     this.cycleTotalMilliseconds = 10000;
     this.currentIteration = 0;
 
+    //this.addListeners();
+
     window.addEventListener('resize', () => this.resizeHandler());
     this.resizeHandler();
     requestAnimationFrame((time) => this.render(time));
@@ -99,23 +86,15 @@ export default class App {
     this.renderer.render(this.scene, this.camera);
     this.tracker.update();
 
-    // Rotates the Boat. Old.
-    // this.boat.matrix.multiply (this.rotateBoatY);
-
-    // Positions the Boat. Old.
-    // this.boat.matrix.multiply (this.newPositionBoat);
-
     // Rotates the Propeller
     this.boat.render();
 
     // Rotates the lighthouse lamp
-    // this.lighthouse.render();
-    this.lighthouse.lamp.rotateY(THREE.Math.degToRad(1));
-    this.lighthouse.lamp.spotlight.target = this.lighthouse.lamp.target;
+    this.lighthouse.render();
 
     // Controlling the position of the boat to a cycle.
-    // let newMilliSecondTime = (new Date()).getTime();
-    let newMilliSecondTime = ts;
+    let newMilliSecondTime = (new Date()).getTime();
+    // let newMilliSecondTime = ts;
     var timeDifference = newMilliSecondTime - this.initialMilliseconds;
     timeDifference = timeDifference % this.cycleTotalMilliseconds;
     let timePercentage = timeDifference / this.cycleTotalMilliseconds;
@@ -137,14 +116,11 @@ export default class App {
       this.lastN = n;
       this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(-15) ));
     }
-    // console.log("Test: " + n);
-    // console.log("Change: " + (n - this.lastN));
 
+    //FIXME uncomment
     this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, -24, boatYPosition));
     this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(-1 * Math.abs(n - this.lastN) ));
     this.lastN = n;
-
-    // this.ghost.matrix.multiply (this.rotY1);
 
     requestAnimationFrame((time) => this.render(time));
   }
@@ -162,5 +138,16 @@ export default class App {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
     this.tracker.handleResize();
+  }
+
+  addListeners() {
+      var directionalToggle = document.getElementById("directionalToggle");
+      directionalToggle.addEventListener("change", () => function(name) {
+          console.log('troy');
+      });
+  }
+
+  toggleLight() {
+      console.log(this.lightOne.visibile);
   }
 }

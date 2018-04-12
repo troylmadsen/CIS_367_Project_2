@@ -1,13 +1,10 @@
-import { ConeGeometry, CylinderGeometry, Group, ImageUtils, Mesh, MeshPhongMaterial, SphereGeometry } from 'three';
+import { ConeGeometry, CylinderGeometry, Group, ImageUtils, Matrix4, Mesh, MeshPhongMaterial, SphereGeometry } from 'three';
+import * as THREE from 'three';
 import Lamp from './Lamp.js';
 
 export default class Lighthouse extends Group {
     constructor () {
         super()
-
-        //FIXME remove this
-        // const marker = new Mesh(new CylinderGeometry(50, 50, 1), new MeshPhongMaterial({color: 0x0000ff}));
-        // this.add(marker);
 
         var NUM_SIDES = 6;
         var LIGHTHOUSE_TOP = 14;
@@ -23,14 +20,16 @@ export default class Lighthouse extends Group {
         var DECK_BOT = LIGHTHOUSE_TOP;
         var DECK_HEIGHT = LIGHTHOUSE_HEIGHT / 20;
         const deckGeom = new CylinderGeometry(DECK_TOP, DECK_BOT, DECK_HEIGHT, NUM_SIDES);
-        const deckMatr = new MeshPhongMaterial({color: 0xffffff});
+        const deckTex = ImageUtils.loadTexture('../textures/dark_brick-4096x1024.jpg');
+        const deckMatr = new MeshPhongMaterial({color: 0xffffff, map: deckTex});
         const deck = new Mesh(deckGeom, deckMatr);
         deck.translateY(LIGHTHOUSE_HEIGHT / 2 + DECK_HEIGHT / 2);
         this.add(deck);
 
         var PEDESTAL_HEIGHT = LIGHTHOUSE_HEIGHT / 15;
         const pedestalGeom = new CylinderGeometry(LIGHTHOUSE_TOP, LIGHTHOUSE_TOP, PEDESTAL_HEIGHT, NUM_SIDES);
-        const pedestalMatr = new MeshPhongMaterial({color: 0xff0000});
+        const pedestalTex = ImageUtils.loadTexture('../textures/wood-2048x2048.jpg');
+        const pedestalMatr = new MeshPhongMaterial({color: 0xffffff, map: pedestalTex});
         const pedestal = new Mesh(pedestalGeom, pedestalMatr);
         pedestal.translateY(LIGHTHOUSE_HEIGHT / 2 + DECK_HEIGHT + PEDESTAL_HEIGHT / 2);
         this.add(pedestal);
@@ -40,7 +39,8 @@ export default class Lighthouse extends Group {
         var SUPPORT_HEIGHT = LIGHTHOUSE_HEIGHT / 8;
         for (var i = 0; i < NUM_SUPPORTS; i++) {
             var supportGeom = new CylinderGeometry(SUPPORT_SIZE, SUPPORT_SIZE, SUPPORT_HEIGHT, 4);
-            var supportMatr = new MeshPhongMaterial({color: 0xff0000});
+            var supportTex = ImageUtils.loadTexture('../textures/wood-2048x2048.jpg');
+            var supportMatr = new MeshPhongMaterial({color: 0xffffff, map: supportTex});
             var support = new Mesh(supportGeom, supportMatr);
             support.rotateY(i * 2 * Math.PI / NUM_SUPPORTS);
             support.translateY(LIGHTHOUSE_HEIGHT / 2 + DECK_HEIGHT + PEDESTAL_HEIGHT + SUPPORT_HEIGHT / 2);
@@ -51,18 +51,24 @@ export default class Lighthouse extends Group {
         var ROOF_BOT = LIGHTHOUSE_TOP * 1.2;
         var ROOF_HEIGHT = LIGHTHOUSE_HEIGHT / 6;
         const roofGeom = new ConeGeometry(ROOF_BOT, ROOF_HEIGHT, NUM_SIDES);
-        const roofMatr = new MeshPhongMaterial({color: 0xff0000});
+        const roofTex = ImageUtils.loadTexture('../textures/wood-2048x2048.jpg');
+        const roofMatr = new MeshPhongMaterial({color: 0xffffff, map: roofTex});
         const roof = new Mesh(roofGeom, roofMatr);
         roof.translateY(LIGHTHOUSE_HEIGHT / 2 + DECK_HEIGHT + PEDESTAL_HEIGHT + SUPPORT_HEIGHT + ROOF_HEIGHT / 2);
         this.add(roof);
 
         this.lamp = new Lamp(4);
-        this.lamp.translateY(LIGHTHOUSE_HEIGHT / 2 + DECK_HEIGHT + PEDESTAL_HEIGHT + this.lamp.STAND_HEIGHT / 2);
-        this.lamp.translateY(LIGHTHOUSE_HEIGHT / 18);
+        this.lamp.matrixAutoUpdate = false;
+        const trans = new Matrix4().makeTranslation(0, LIGHTHOUSE_HEIGHT / 2 + DECK_HEIGHT + PEDESTAL_HEIGHT + this.lamp.STAND_HEIGHT / 2 + LIGHTHOUSE_HEIGHT / 18, 0);
+        this.lamp.matrix.multiply(trans);
         this.add(this.lamp);
+
+        var lampRotRad = THREE.Math.degToRad(1);
+        this.lampRot = new THREE.Matrix4().makeRotationY(lampRotRad);
     }
 
     render() {
-        this.lamp.rotateY(0.005);
+        this.lamp.applyMatrix(this.lampRot);
+        this.lamp.render();
     }
 }
