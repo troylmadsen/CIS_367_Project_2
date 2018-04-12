@@ -26,7 +26,10 @@ export default class App {
     this.tracker.noZoom = false;
     this.tracker.noPan = false;
 
-    //FIXME replace this with boat
+    // Keyboard Listener
+    window.addEventListener("keydown", this.keydownHandler.bind(this));
+
+    // FIXME replace this with boat
     // this.boat_deg = 0;
     // this.deg_change_rate = 2 * Math.PI / 2000;
     //
@@ -125,17 +128,17 @@ export default class App {
     // var t = timePercentage * 2 * Math.PI;
     var t = timePercentage * 2 * Math.PI;
     var boatXPosition = 52 * Math.cos(t);
-    var boatYPosition = 15 * Math.sin(t);
+    var boatYPosition = 30 * Math.sin(t);
 
     // First derivative - The direction of the boat.
       // dx/dt = 52 * -sin(t)
       // dy/dt = 25 * cos(t)
-    var secondLine = new THREE.Vector3( (-52 * Math.sin(t)), (15 * Math.cos(t)), 0);
+    var secondLine = new THREE.Vector3( (-52 * Math.sin(t)), (30 * Math.cos(t)), 0);
     var xLine = new THREE.Vector3(1, 0, 0);
     var n = xLine.angleTo(secondLine);
     if (this.lastN === undefined || this.lastN === null) {
       this.lastN = n;
-      this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(-15) ));
+      this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(12) ));
     }
     // console.log("Test: " + n);
     // console.log("Change: " + (n - this.lastN));
@@ -147,6 +150,74 @@ export default class App {
     // this.ghost.matrix.multiply (this.rotY1);
 
     requestAnimationFrame((time) => this.render(time));
+  }
+
+  keydownHandler(event) {
+
+    var whichRadio = "";
+    if (document.getElementById('boat_but').checked == true) {
+      whichRadio = "boat";
+    } else if (document.getElementById('lighthouse_but').checked == true) {
+      whichRadio = "lighthouse";
+    }
+
+    var keycode = event.keyCode || event.which;
+    switch (keycode) {
+
+      // LEFT
+      case 37:
+        console.log("LEFT");
+        if (whichRadio == "boat") {
+          console.log("BOAT");
+        } else if (whichRadio == "lighthouse") {
+          console.log("LIGHTHOUSE");
+        }
+        break;
+
+      // RIGHT
+      case 39:
+        console.log("RIGHT");
+        if (whichRadio == "boat") {
+          console.log("BOAT");
+        } else if (whichRadio == "lighthouse") {
+          console.log("LIGHTHOUSE");
+        }
+        break;
+
+      // UP
+      case 38:
+        console.log("UP");
+        if (whichRadio == "boat") {
+          console.log("BOAT");
+        } else if (whichRadio == "lighthouse") {
+          console.log("LIGHTHOUSE");
+        }
+        break;
+
+      // DOWN
+      case 40:
+        console.log("DOWN");
+        if (whichRadio == "boat") {
+          console.log("BOAT");
+        } else if (whichRadio == "lighthouse") {
+          console.log("LIGHTHOUSE");
+        }
+        break;
+
+      // SPACE
+      case 32:
+        console.log("SPACE");
+        if (whichRadio == "boat") {
+          console.log("BOAT");
+        } else if (whichRadio == "lighthouse") {
+          console.log("LIGHTHOUSE");
+        }
+        break;
+
+      // DEFAULT
+      default:
+        console.log("SOMEKEY");
+    }
   }
 
   resizeHandler() {
