@@ -28,11 +28,20 @@
 </style>
 
 <body>
-    <p>Troy Madsen and Brendon Murthum</p>
-    <p>Mouse: Left=rotate, Middle=zoom, Right=pan</p>
+    <p>Troy Madsen</p>
+    <p>Mouse: Left = rotate, Middle = zoom, Right = pan</p>
+    <p>Control Different Objects with "WASD":</p>
+    <p>
+        Lighthouse: <input type="radio" id="lighthouse_but" name="whichObject" value="lighthouse"> <br/>
+        Boat: <input type="radio" id="boat_but" name="whichObject" value="boat"> <br/>
+    </p>
+    <div>
+        <input id="directionalToggle" type="checkbox">
+        <label for="directionalToggle">Directional Toggle</label>
+    </div>
     <div id="container">
       <canvas id="mycanvas"></canvas>
-    </div>
+  </div>
 <script type="text/javascript" src="bundle.js"></script></body>
 
 </html>
