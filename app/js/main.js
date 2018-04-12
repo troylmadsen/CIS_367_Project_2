@@ -27,16 +27,16 @@ export default class App {
     this.tracker.noPan = false;
 
     //FIXME replace this with boat
-    this.boat_deg = 0;
-    this.deg_change_rate = 2 * Math.PI / 2000;
-
-    var boatGeom = new BoxGeometry(5, 5, 10);
-    var boatMatr = new MeshPhongMaterial({color: 0x00ff00});
-    this.boat = new Mesh(boatGeom, boatMatr);
-    this.boat.matrixAutoUpdate = false;
-    var offset = new Matrix4().makeTranslation(0, 0, 20);
-    this.boat.matrix.multiply(offset);
-    this.scene.add(this.boat);
+    // this.boat_deg = 0;
+    // this.deg_change_rate = 2 * Math.PI / 2000;
+    //
+    // var boatGeom = new BoxGeometry(5, 5, 10);
+    // var boatMatr = new MeshPhongMaterial({color: 0x00ff00});
+    // this.boat = new Mesh(boatGeom, boatMatr);
+    // this.boat.matrixAutoUpdate = false;
+    // var offset = new Matrix4().makeTranslation(0, 0, 20);
+    // this.boat.matrix.multiply(offset);
+    // this.scene.add(this.boat);
     // this.ghost = new Ghost(0x505050);
     // this.ghost.matrixAutoUpdate = false;
     // this.scene.add(this.ghost);
@@ -71,11 +71,11 @@ export default class App {
     // var bot_rot = new Matrix4().makeRotationX(Math.cos());
     // this.boat.matrix.multiply(bot_rot);
 
-    var move = new Matrix4().makeTranslation(0, Math.sin(ts/500) / 4, 0);
-    var rot = new Matrix4().makeRotationX(Math.cos(ts/500));
-    console.log(THREE.Math.radToDeg(Math.cos(ts/500)));
-    // this.boat.matrix.multiply(move);
-    this.boat.matrix.multiply(rot);
+    // var move = new Matrix4().makeTranslation(0, Math.sin(ts/500) / 4, 0);
+    // var rot = new Matrix4().makeRotationX(Math.cos(ts/500));
+    // console.log(THREE.Math.radToDeg(Math.cos(ts/500)));
+    // // this.boat.matrix.multiply(move);
+    // this.boat.matrix.multiply(rot);
 
     requestAnimationFrame((time) => this.render(time));
   }
