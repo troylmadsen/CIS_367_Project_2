@@ -44,8 +44,9 @@ export default class App {
     // Adding the boat.
     this.boat = new Boat();
     this.boat.matrixAutoUpdate = false;
-    this.boat.matrix.setPosition(new THREE.Vector3(20, -22, 30));
+    this.boat.matrix.setPosition(new THREE.Vector3(42, -24, -50));
     this.scene.add(this.boat);
+
     // this.rotateBoatY = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(5));
     // this.newPositionBoat = new THREE.Matrix4().makeTranslation(20, -22, 30);
 
@@ -57,7 +58,8 @@ export default class App {
 
     // Use real-time to aid boat circuit.
     this.initialMilliseconds = (new Date()).getTime();
-    this.cycleTotalMilliseconds = 5000;
+    this.cycleTotalMilliseconds = 10000;
+    this.currentIteration = 0;
 
     window.addEventListener('resize', () => this.resizeHandler());
     this.resizeHandler();
@@ -85,8 +87,33 @@ export default class App {
 
     // Use timePercentage as the "S" value in a parametric equation to get
     // new values for X and Y
-    this.boat.matrix.setPosition(new THREE.Vector3(20, -22, 30 * timePercentage));
+    var boatXPosition = 52 * Math.cos(timePercentage * 2 * Math.PI);
+    var boatYPosition = 25 * Math.sin(timePercentage * 2 * Math.PI);
 
+    // Different first iteration.
+    if (this.currentIteration == 0) {
+      this.lastXPosition = boatXPosition;
+      this.lastYPosition = boatYPosition;
+      this.currentIteration = 1;
+
+    } else if (this.currentIteration == 1) {
+      this.currentLine = new THREE.Vector3(this.lastXPosition - boatXPosition, -24, this.lastYPosition - boatYPosition);
+      this.lastLine = this.currentLine;
+      this.lastXPosition = boatXPosition;
+      this.lastYPosition = boatYPosition;
+      this.currentIteration = 2;
+
+    } else {
+      this.currentLine = new THREE.Vector3(this.lastXPosition - boatXPosition, -24, this.lastYPosition - boatYPosition);
+      this.lastXPosition = boatXPosition;
+      this.lastYPosition = boatYPosition;
+      var newAngle = this.lastLine.angleTo(this.currentLine);
+      this.lastLine = this.currentLine;
+      this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(-newAngle * 3));
+    }
+
+    this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, -24, boatYPosition));
+    // this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(-2)));
 
     // this.ghost.matrix.multiply (this.rotY1);
 
