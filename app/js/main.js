@@ -4,6 +4,8 @@ import * as THREE from 'three';
 import TrackballControls from 'three-trackballcontrols';
 import Ghost from './models/Ghost';
 import Lighthouse from './models/Lighthouse';
+import Boat from './models/Boat';
+import PlacementGrid from './models/PlacementGrid';
 import Mailbox from './models/Mailbox';
 
 //FIXME remove this
@@ -53,6 +55,26 @@ export default class App {
 
     // this.rotY1 = new Matrix4().makeRotationY(THREE.Math.degToRad(1));
 
+    // Adding the boat.
+    this.boat = new Boat();
+    this.boat.matrixAutoUpdate = false;
+    this.boat.matrix.setPosition(new THREE.Vector3(42, -24, -50));
+    this.scene.add(this.boat);
+
+    // this.rotateBoatY = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(5));
+    // this.newPositionBoat = new THREE.Matrix4().makeTranslation(20, -22, 30);
+
+    // Adding the placement grid.
+    this.placementgrid = new PlacementGrid();
+    this.placementgrid.rotateX(Math.PI / 2);
+    this.scene.add(this.placementgrid);
+    this.placementgrid.position.y = -25;
+
+    // Use real-time to aid boat circuit.
+    this.initialMilliseconds = (new Date()).getTime();
+    this.cycleTotalMilliseconds = 10000;
+    this.currentIteration = 0;
+
     window.addEventListener('resize', () => this.resizeHandler());
     this.resizeHandler();
     requestAnimationFrame((time) => this.render(time));
@@ -62,20 +84,47 @@ export default class App {
     this.renderer.render(this.scene, this.camera);
     this.tracker.update();
 
-    // FIXME Boat angle changing
-    // this.boat_deg += this.deg_change_rate;
-    // if (this.boat_deg > 2 * Math.PI) {
-    //     this.boat_deg = 0;
-    // }
+    // Rotates the Boat. Old.
+    // this.boat.matrix.multiply (this.rotateBoatY);
 
-    // var bot_rot = new Matrix4().makeRotationX(Math.cos());
-    // this.boat.matrix.multiply(bot_rot);
+    // Positions the Boat. Old.
+    // this.boat.matrix.multiply (this.newPositionBoat);
 
-    // var move = new Matrix4().makeTranslation(0, Math.sin(ts/500) / 4, 0);
-    // var rot = new Matrix4().makeRotationX(Math.cos(ts/500));
-    // console.log(THREE.Math.radToDeg(Math.cos(ts/500)));
-    // // this.boat.matrix.multiply(move);
-    // this.boat.matrix.multiply(rot);
+    // Rotates the Propeller
+    this.boat.render();
+
+    // Controlling the position of the boat to a cycle.
+    // let newMilliSecondTime = (new Date()).getTime();
+    let newMilliSecondTime = ts;
+    var timeDifference = newMilliSecondTime - this.initialMilliseconds;
+    timeDifference = timeDifference % this.cycleTotalMilliseconds;
+    let timePercentage = timeDifference / this.cycleTotalMilliseconds;
+
+    // Use timePercentage as the "S" value in a parametric equation to get
+    // new values for X and Y
+    // var t = timePercentage * 2 * Math.PI;
+    var t = timePercentage * 2 * Math.PI;
+    var boatXPosition = 52 * Math.cos(t);
+    var boatYPosition = 15 * Math.sin(t);
+
+    // First derivative - The direction of the boat.
+      // dx/dt = 52 * -sin(t)
+      // dy/dt = 25 * cos(t)
+    var secondLine = new THREE.Vector3( (-52 * Math.sin(t)), (15 * Math.cos(t)), 0);
+    var xLine = new THREE.Vector3(1, 0, 0);
+    var n = xLine.angleTo(secondLine);
+    if (this.lastN === undefined || this.lastN === null) {
+      this.lastN = n;
+      this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(-15) ));
+    }
+    // console.log("Test: " + n);
+    // console.log("Change: " + (n - this.lastN));
+
+    this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, -24, boatYPosition));
+    this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(-1 * Math.abs(n - this.lastN) ));
+    this.lastN = n;
+
+    // this.ghost.matrix.multiply (this.rotY1);
 
     requestAnimationFrame((time) => this.render(time));
   }
