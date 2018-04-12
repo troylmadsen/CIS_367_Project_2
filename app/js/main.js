@@ -90,50 +90,24 @@ export default class App {
     // var t = timePercentage * 2 * Math.PI;
     var t = timePercentage * 2 * Math.PI;
     var boatXPosition = 52 * Math.cos(t);
-    var boatYPosition = 25 * Math.sin(t);
+    var boatYPosition = 15 * Math.sin(t);
 
     // First derivative - The direction of the boat.
       // dx/dt = 52 * -sin(t)
       // dy/dt = 25 * cos(t)
-
-    // Second derivative - The change of direction in the moment.
-      // ddx/ddt = 52 * -cos(t)
-      // ddy/ddt = 25 * -sin(t)
-    var firstLine = new THREE.Vector3( (-52 * Math.cos(t*2)), (-25 * Math.sin(t*2)), 0);
+    var secondLine = new THREE.Vector3( (-52 * Math.sin(t)), (15 * Math.cos(t)), 0);
     var xLine = new THREE.Vector3(1, 0, 0);
-    var newAngle = Math.abs(firstLine.angleTo(xLine));
-    console.log("Test: " + newAngle);
-
-    // TODO - Would the roation per moment be the second-derivative of the circle?
-    // var boatRotation = -(25 * (Math.cos(t)/Math.sin(t))) / 52; // Change this.
-
-    // Different first iteration.
-    /*
-    if (this.currentIteration == 0) {
-      this.lastXPosition = boatXPosition;
-      this.lastYPosition = boatYPosition;
-      this.currentIteration = 1;
-
-    } else if (this.currentIteration == 1) {
-      this.currentLine = new THREE.Vector3(this.lastXPosition - boatXPosition, -24, this.lastYPosition - boatYPosition);
-      this.lastLine = new THREE.Vector3(this.lastXPosition - boatXPosition, -24, this.lastYPosition - boatYPosition);
-      this.lastXPosition = boatXPosition;
-      this.lastYPosition = boatYPosition;
-      this.currentIteration = 2;
-
-    } else {
-      this.currentLine = new THREE.Vector3(this.lastXPosition - boatXPosition, -24, this.lastYPosition - boatYPosition);
-      this.lastXPosition = boatXPosition;
-      this.lastYPosition = boatYPosition;
-      // var newAngle = this.lastLine.angleTo(this.currentLine);
-      this.lastLine = this.currentLine;
-      // this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(boatRotation));
+    var n = xLine.angleTo(secondLine);
+    if (this.lastN === undefined || this.lastN === null) {
+      this.lastN = n;
+      this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(-15) ));
     }
-    */
+    // console.log("Test: " + n);
+    // console.log("Change: " + (n - this.lastN));
 
     this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, -24, boatYPosition));
-    // this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(-2)));
-    this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(-newAngle / 25));
+    this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(-1 * Math.abs(n - this.lastN) ));
+    this.lastN = n;
 
     // this.ghost.matrix.multiply (this.rotY1);
 

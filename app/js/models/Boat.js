@@ -32,6 +32,6 @@ export default class Boat extends Group {
 
     render() {
         // Rotates the propeller
-        this.propeller.rotateZ(.3);
+        this.propeller.rotateZ(.7);
     }
 }
