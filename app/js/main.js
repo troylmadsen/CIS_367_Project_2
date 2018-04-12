@@ -67,7 +67,7 @@ export default class App {
     // Adding the placement grid.
     this.placementgrid = new PlacementGrid();
     this.placementgrid.rotateX(Math.PI / 2);
-    this.scene.add(this.placementgrid);
+    //this.scene.add(this.placementgrid);
     this.placementgrid.position.y = -25;
 
     // Use real-time to aid boat circuit.
@@ -75,7 +75,7 @@ export default class App {
     this.cycleTotalMilliseconds = 10000;
     this.currentIteration = 0;
 
-    //this.addListeners();
+    this.addListeners();
 
     window.addEventListener('resize', () => this.resizeHandler());
     this.resizeHandler();
@@ -142,12 +142,10 @@ export default class App {
 
   addListeners() {
       var directionalToggle = document.getElementById("directionalToggle");
-      directionalToggle.addEventListener("change", () => function(name) {
-          console.log('troy');
-      });
+      directionalToggle.addEventListener("change", this.toggleLight);
   }
 
-  toggleLight() {
-      console.log(this.lightOne.visibile);
+  toggleLight(event) {
+      console.log(this.lightOne.toJSON());
   }
 }
