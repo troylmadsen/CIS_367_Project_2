@@ -38,34 +38,38 @@ export default class App {
     const skybox = new Mesh(skyboxGeom, skyboxMatr);
     this.scene.add(skybox);
 
-    // Adding directional light.
-    const lightOne = new THREE.DirectionalLight(0xffffff, 1.0);
-    lightOne.position.set(10, 40, 100);
-    this.scene.add(lightOne);
+      // FIRST
+      // Adding directional light.
+      const lightOne = new THREE.DirectionalLight(0xffffff, 1.0);
+      lightOne.position.set(10, 40, 100);
+      this.scene.add(lightOne);
+
+      // SECOND
+      this.lighthouse = new Lighthouse();
+      this.lighthouse.lamp.matrixAutoUpdate = false;
+      this.scene.add(this.lighthouse);
 
     // Adding ambient light.
     const ambientLight = new THREE.AmbientLight(0x404040);
     this.scene.add(ambientLight);
 
-    // Adding the lighthouse.
-    this.lighthouse = new Lighthouse();
-    this.scene.add(this.lighthouse);
-
     // Adding the boat.
-    this.boat = new Boat();
+    this.boat = new Boat(1);
     this.boat.matrixAutoUpdate = false;
-    this.boat.matrix.setPosition(new THREE.Vector3(42, -24, -50));
+    // this.boat.matrix.setPosition(new THREE.Vector3(42, -24, -50));
     this.scene.add(this.boat);
 
     // Adding the placement grid.
     this.placementgrid = new PlacementGrid();
     this.placementgrid.rotateX(Math.PI / 2);
-    this.scene.add(this.placementgrid);
+    //this.scene.add(this.placementgrid);
     this.placementgrid.position.y = -25;
 
     // Use real-time to aid boat circuit.
     this.initialMilliseconds = (new Date()).getTime();
     this.cycleTotalMilliseconds = 10000;
+
+    this.addListeners();
 
     window.addEventListener('resize', () => this.resizeHandler());
     this.resizeHandler();
@@ -81,13 +85,11 @@ export default class App {
     this.boat.render();
 
     // Rotates the lighthouse lamp
-    // this.lighthouse.render();
-    this.lighthouse.lamp.rotateY(THREE.Math.degToRad(1));
-    this.lighthouse.lamp.spotlight.target = this.lighthouse.lamp.target;
+    this.lighthouse.render();
 
     // Controlling the position of the boat to a cycle.
-    // let newMilliSecondTime = (new Date()).getTime();
-    let newMilliSecondTime = ts;
+    let newMilliSecondTime = (new Date()).getTime();
+    // let newMilliSecondTime = ts;
     var timeDifference = newMilliSecondTime - this.initialMilliseconds;
     timeDifference = timeDifference % this.cycleTotalMilliseconds;
     let timePercentage = timeDifference / this.cycleTotalMilliseconds;
@@ -108,10 +110,7 @@ export default class App {
       this.lastN = n;
       this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(12) ));
     }
-      // console.log("Test: " + n);
-      // console.log("Change: " + (n - this.lastN));
 
-    // Rotate and position in each render-moment relative to the last.
     this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, -24, boatYPosition));
     this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(-1 * Math.abs(n - this.lastN) ));
     this.lastN = n;
@@ -204,5 +203,14 @@ export default class App {
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
     this.tracker.handleResize();
+  }
+
+  addListeners() {
+      var directionalToggle = document.getElementById("directionalToggle");
+      directionalToggle.addEventListener("change", this.toggleLight);
+  }
+
+  toggleLight(event) {
+      console.log(this.lightOne.toJSON());
   }
 }
