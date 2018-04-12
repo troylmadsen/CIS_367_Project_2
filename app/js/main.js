@@ -12,15 +12,14 @@ import {BoxGeometry, Matrix4, Mesh, MeshPhongMaterial} from 'three';
 export default class App {
   constructor() {
     const c = document.getElementById('mycanvas');
-    // Enable antialias for smoother lines
+
+    // Enable antialias for smoother lines.
     this.renderer = new THREE.WebGLRenderer({canvas: c, antialias: true});
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(75, 4/3, 0.5, 500);
     this.camera.position.z = 100;
 
-    // const orbiter = new OrbitControls(this.camera);
-    // orbiter.enableZoom = false;
-    // orbiter.update();
+    // Adds mouse camera control.
     this.tracker = new TrackballControls(this.camera);
     this.tracker.rotateSpeed = 2.0;
     this.tracker.noZoom = false;
@@ -32,55 +31,31 @@ export default class App {
     // FIXME replace this with boat
     // this.boat_deg = 0;
     // this.deg_change_rate = 2 * Math.PI / 2000;
-    //
-    // var boatGeom = new BoxGeometry(5, 5, 10);
-    // var boatMatr = new MeshPhongMaterial({color: 0x00ff00});
-    // this.boat = new Mesh(boatGeom, boatMatr);
-    // this.boat.matrixAutoUpdate = false;
-    // var offset = new Matrix4().makeTranslation(0, 0, 20);
-    // this.boat.matrix.multiply(offset);
-    // this.scene.add(this.boat);
-    // this.ghost = new Ghost(0x505050);
-    // this.ghost.matrixAutoUpdate = false;
-    // this.scene.add(this.ghost);
 
-    //FIXME remove this
-    const marker1 = new THREE.Mesh(new THREE.CylinderGeometry(50, 50, 1), new THREE.MeshPhongMaterial({color: 0x0000ff}));
-    marker1.rotateX(Math.PI / 2);
-    marker1.translateY(50);
-    this.scene.add(marker1);
-
-    //FIXME remove this
-    const marker2 = new THREE.Mesh(new THREE.CylinderGeometry(50, 50, 1), new THREE.MeshPhongMaterial({color: 0x0000ff}));
-    marker2.rotateX(Math.PI / 2);
-    marker2.translateY(-50);
-    this.scene.add(marker2);
-
+    // Adding skybox.
     const skyboxGeom = new THREE.SphereGeometry(100, 32, 32);
     const skyboxMatr = new MeshPhongMaterial({color: 0xff00ff, side: THREE.BackSide});
     const skybox = new Mesh(skyboxGeom, skyboxMatr);
     this.scene.add(skybox);
 
-    this.lighthouse = new Lighthouse();
-    this.scene.add(this.lighthouse);
-
+    // Adding directional light.
     const lightOne = new THREE.DirectionalLight(0xffffff, 1.0);
     lightOne.position.set(10, 40, 100);
     this.scene.add(lightOne);
 
+    // Adding ambient light.
     const ambientLight = new THREE.AmbientLight(0x404040);
     this.scene.add(ambientLight);
 
-    // this.rotY1 = new Matrix4().makeRotationY(THREE.Math.degToRad(1));
+    // Adding the lighthouse.
+    this.lighthouse = new Lighthouse();
+    this.scene.add(this.lighthouse);
 
     // Adding the boat.
     this.boat = new Boat();
     this.boat.matrixAutoUpdate = false;
     this.boat.matrix.setPosition(new THREE.Vector3(42, -24, -50));
     this.scene.add(this.boat);
-
-    // this.rotateBoatY = new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(5));
-    // this.newPositionBoat = new THREE.Matrix4().makeTranslation(20, -22, 30);
 
     // Adding the placement grid.
     this.placementgrid = new PlacementGrid();
@@ -91,22 +66,16 @@ export default class App {
     // Use real-time to aid boat circuit.
     this.initialMilliseconds = (new Date()).getTime();
     this.cycleTotalMilliseconds = 10000;
-    this.currentIteration = 0;
 
     window.addEventListener('resize', () => this.resizeHandler());
     this.resizeHandler();
     requestAnimationFrame((time) => this.render(time));
   }
 
+  // Updates for animation.
   render(ts) {
     this.renderer.render(this.scene, this.camera);
     this.tracker.update();
-
-    // Rotates the Boat. Old.
-    // this.boat.matrix.multiply (this.rotateBoatY);
-
-    // Positions the Boat. Old.
-    // this.boat.matrix.multiply (this.newPositionBoat);
 
     // Rotates the Propeller
     this.boat.render();
@@ -124,8 +93,7 @@ export default class App {
     let timePercentage = timeDifference / this.cycleTotalMilliseconds;
 
     // Use timePercentage as the "S" value in a parametric equation to get
-    // new values for X and Y
-    // var t = timePercentage * 2 * Math.PI;
+    // new values for X and Y.
     var t = timePercentage * 2 * Math.PI;
     var boatXPosition = 52 * Math.cos(t);
     var boatYPosition = 30 * Math.sin(t);
@@ -140,18 +108,18 @@ export default class App {
       this.lastN = n;
       this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(12) ));
     }
-    // console.log("Test: " + n);
-    // console.log("Change: " + (n - this.lastN));
+      // console.log("Test: " + n);
+      // console.log("Change: " + (n - this.lastN));
 
+    // Rotate and position in each render-moment relative to the last.
     this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, -24, boatYPosition));
     this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(-1 * Math.abs(n - this.lastN) ));
     this.lastN = n;
 
-    // this.ghost.matrix.multiply (this.rotY1);
-
     requestAnimationFrame((time) => this.render(time));
   }
 
+  // Handles keyboard events for object control.
   keydownHandler(event) {
 
     var whichRadio = "";
@@ -209,6 +177,8 @@ export default class App {
         console.log("SPACE");
         if (whichRadio == "boat") {
           console.log("BOAT");
+
+
         } else if (whichRadio == "lighthouse") {
           console.log("LIGHTHOUSE");
         }
@@ -220,6 +190,7 @@ export default class App {
     }
   }
 
+  // Handles page resizing.
   resizeHandler() {
     const canvas = document.getElementById("mycanvas");
     let w = window.innerWidth - 16;
