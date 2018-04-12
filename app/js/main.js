@@ -6,9 +6,6 @@ import Lighthouse from './models/Lighthouse';
 import Boat from './models/Boat';
 import PlacementGrid from './models/PlacementGrid';
 
-//FIXME remove this
-import {BoxGeometry, Matrix4, Mesh, MeshPhongMaterial} from 'three';
-
 export default class App {
   constructor() {
     const c = document.getElementById('mycanvas');
@@ -28,26 +25,21 @@ export default class App {
     // Keyboard Listener
     window.addEventListener("keydown", this.keydownHandler.bind(this));
 
-    // FIXME replace this with boat
-    // this.boat_deg = 0;
-    // this.deg_change_rate = 2 * Math.PI / 2000;
-
     // Adding skybox.
     const skyboxGeom = new THREE.SphereGeometry(100, 32, 32);
-    const skyboxMatr = new MeshPhongMaterial({color: 0xff00ff, side: THREE.BackSide});
-    const skybox = new Mesh(skyboxGeom, skyboxMatr);
+    const skyboxMatr = new THREE.MeshPhongMaterial({color: 0xff00ff, side: THREE.BackSide});
+    const skybox = new THREE.Mesh(skyboxGeom, skyboxMatr);
     this.scene.add(skybox);
 
-      // FIRST
-      // Adding directional light.
-      const lightOne = new THREE.DirectionalLight(0xffffff, 1.0);
-      lightOne.position.set(10, 40, 100);
-      this.scene.add(lightOne);
+    // Adding directional light.
+    const lightOne = new THREE.DirectionalLight(0xffffff, 1.0);
+    lightOne.position.set(10, 40, 100);
+    this.scene.add(lightOne);
 
-      // SECOND
-      this.lighthouse = new Lighthouse();
-      this.lighthouse.lamp.matrixAutoUpdate = false;
-      this.scene.add(this.lighthouse);
+    // Adding lighthouse.
+    this.lighthouse = new Lighthouse();
+    this.lighthouse.lamp.matrixAutoUpdate = false;
+    this.scene.add(this.lighthouse);
 
     // Adding ambient light.
     const ambientLight = new THREE.AmbientLight(0x404040);
@@ -56,13 +48,12 @@ export default class App {
     // Adding the boat.
     this.boat = new Boat(1);
     this.boat.matrixAutoUpdate = false;
-    // this.boat.matrix.setPosition(new THREE.Vector3(42, -24, -50));
     this.scene.add(this.boat);
 
     // Adding the placement grid.
     this.placementgrid = new PlacementGrid();
     this.placementgrid.rotateX(Math.PI / 2);
-    //this.scene.add(this.placementgrid);
+    // this.scene.add(this.placementgrid);
     this.placementgrid.position.y = -25;
 
     // Use real-time to aid boat circuit.
