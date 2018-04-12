@@ -2,11 +2,9 @@ import * as THREE from 'three';
 // import orbit from 'three-orbit-controls';
 // const OrbitControls = orbit(THREE);
 import TrackballControls from 'three-trackballcontrols';
-import Ghost from './models/Ghost';
 import Lighthouse from './models/Lighthouse';
 import Boat from './models/Boat';
 import PlacementGrid from './models/PlacementGrid';
-import Mailbox from './models/Mailbox';
 
 //FIXME remove this
 import {BoxGeometry, Matrix4, Mesh, MeshPhongMaterial} from 'three';
@@ -42,6 +40,23 @@ export default class App {
     // this.ghost = new Ghost(0x505050);
     // this.ghost.matrixAutoUpdate = false;
     // this.scene.add(this.ghost);
+
+    //FIXME remove this
+    const marker1 = new THREE.Mesh(new THREE.CylinderGeometry(50, 50, 1), new THREE.MeshPhongMaterial({color: 0x0000ff}));
+    marker1.rotateX(Math.PI / 2);
+    marker1.translateY(50);
+    this.scene.add(marker1);
+
+    //FIXME remove this
+    const marker2 = new THREE.Mesh(new THREE.CylinderGeometry(50, 50, 1), new THREE.MeshPhongMaterial({color: 0x0000ff}));
+    marker2.rotateX(Math.PI / 2);
+    marker2.translateY(-50);
+    this.scene.add(marker2);
+
+    const skyboxGeom = new THREE.SphereGeometry(100, 32, 32);
+    const skyboxMatr = new MeshPhongMaterial({color: 0xff00ff, side: THREE.BackSide});
+    const skybox = new Mesh(skyboxGeom, skyboxMatr);
+    this.scene.add(skybox);
 
     this.lighthouse = new Lighthouse();
     this.scene.add(this.lighthouse);
@@ -92,6 +107,11 @@ export default class App {
 
     // Rotates the Propeller
     this.boat.render();
+
+    // Rotates the lighthouse lamp
+    // this.lighthouse.render();
+    this.lighthouse.lamp.rotateY(THREE.Math.degToRad(1));
+    this.lighthouse.lamp.spotlight.target = this.lighthouse.lamp.target;
 
     // Controlling the position of the boat to a cycle.
     // let newMilliSecondTime = (new Date()).getTime();
