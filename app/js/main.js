@@ -6,9 +6,6 @@ import Lighthouse from './models/Lighthouse';
 import Boat from './models/Boat';
 import PlacementGrid from './models/PlacementGrid';
 
-//FIXME remove this
-import {BoxGeometry, Matrix4, Mesh, MeshPhongMaterial} from 'three';
-
 export default class App {
   constructor() {
     const c = document.getElementById('mycanvas');
@@ -26,18 +23,6 @@ export default class App {
     this.tracker.noZoom = false;
     this.tracker.noPan = false;
 
-    // //FIXME remove this
-    // const marker1 = new THREE.Mesh(new THREE.CylinderGeometry(50, 50, 1), new THREE.MeshPhongMaterial({color: 0x0000ff}));
-    // marker1.rotateX(Math.PI / 2);
-    // marker1.translateY(50);
-    // this.scene.add(marker1);
-    //
-    // //FIXME remove this
-    // const marker2 = new THREE.Mesh(new THREE.CylinderGeometry(50, 50, 1), new THREE.MeshPhongMaterial({color: 0x0000ff}));
-    // marker2.rotateX(Math.PI / 2);
-    // marker2.translateY(-50);
-    // this.scene.add(marker2);
-
     const skyboxGeom = new THREE.SphereGeometry(100, 32, 32);
     const skyboxMatr = new MeshPhongMaterial({color: 0xff00ff, side: THREE.BackSide});
     const skybox = new Mesh(skyboxGeom, skyboxMatr);
@@ -45,7 +30,6 @@ export default class App {
 
     this.lighthouse = new Lighthouse();
     this.lighthouse.lamp.matrixAutoUpdate = false;
-    //FIXME uncomment
     this.scene.add(this.lighthouse);
 
     this.lightOne = new THREE.DirectionalLight(0xffffff, 1.0);
@@ -117,7 +101,6 @@ export default class App {
       this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(-15) ));
     }
 
-    //FIXME uncomment
     this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, -24, boatYPosition));
     this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(-1 * Math.abs(n - this.lastN) ));
     this.lastN = n;
