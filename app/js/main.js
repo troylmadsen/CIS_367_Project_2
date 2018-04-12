@@ -94,7 +94,8 @@ export default class App {
     this.boat.render();
 
     // Controlling the position of the boat to a cycle.
-    let newMilliSecondTime = (new Date()).getTime();
+    // let newMilliSecondTime = (new Date()).getTime();
+    let newMilliSecondTime = ts;
     var timeDifference = newMilliSecondTime - this.initialMilliseconds;
     timeDifference = timeDifference % this.cycleTotalMilliseconds;
     let timePercentage = timeDifference / this.cycleTotalMilliseconds;
