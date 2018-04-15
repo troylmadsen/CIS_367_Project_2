@@ -31,27 +31,29 @@
     <p>Troy Madsen</p>
     <p>Mouse: Left = Rotate X/Y, Middle = Rotate Z, Right = Pan X/Y, Scroll = Pan Z</p>
     <p>
-        <div>
-            <input type="radio" id="camera_but" name= "whichObject" value="camera" checked>
-            <label for="camera_but">Camera</label> <br/>
-        </div>
-        <div>
-            <input type="radio" id="lighthouse_but" name="whichObject" value="lighthouse">
-            <label for="lighthouse_but">Lighthouse</label> <br/>
-        </div>
-        <div>
-            <input type="radio" id="boat_but" name="whichObject" value="boat">
-            <label for="boat_but">Boat</label> <br/>
-        </div>
+        <form id="radioButtons">
+            <div>
+                <input type="radio" id="camera_but" name= "whichObject" value="camera" checked>
+                <label for="camera_but">Camera</label> <br/>
+            </div>
+            <div>
+                <input type="radio" id="lighthouse_but" name="whichObject" value="lighthouse">
+                <label for="lighthouse_but">Lighthouse</label> <br/>
+            </div>
+            <div>
+                <input type="radio" id="boat_but" name="whichObject" value="boat">
+                <label for="boat_but">Boat</label> <br/>
+            </div>
+        </form>
     </p>
     <p>
         <div>
-            <input id="directionalLightToggle" type="checkbox" checked>
-            <label for="directionalLightToggle">Directional Light</label>
+            <input id="directionalLight" type="checkbox" checked>
+            <label for="directionalLight">Directional Light</label>
         </div>
         <div>
-            <input id="spotlightToggle" type="checkbox" checked>
-            <label for="spotlightToggle">Spotlight</label>
+            <input id="spotlight" type="checkbox" checked>
+            <label for="spotlight">Spotlight</label>
         </div>
     </p>
     <div id="container">
