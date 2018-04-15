@@ -67,9 +67,15 @@ export default class App {
     this.placementgrid.position.y = -25;
 
     // Use real-time to aid boat circuit.
-    this.initialMilliseconds = (new Date()).getTime();
+    this.initialMilliseconds = (new Date()).getTime() + 5000;
     this.cycleTotalMilliseconds = 10000;
-    this.isBoatMoving = true;
+    this.isBoatMoving = false;
+    this.timeDifference = 0;
+
+    // Set initial boat-positioning.
+    var boatXPosition = 52 * Math.cos(0);
+    var boatYPosition = 30 * Math.sin(0);
+    this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, -24, boatYPosition));
 
     this.addHandlers();
     this.resizeHandler();
@@ -91,7 +97,6 @@ export default class App {
     if (this.isBoatMoving == true) {
 
       this.newMilliSecondTime = (new Date()).getTime();
-      // let newMilliSecondTime = ts;
       this.timeDifference = this.newMilliSecondTime - this.initialMilliseconds;
       this.timeDifference = this.timeDifference % this.cycleTotalMilliseconds;
       this.timePercentage = this.timeDifference / this.cycleTotalMilliseconds;
@@ -110,6 +115,7 @@ export default class App {
       var n = xLine.angleTo(secondLine);
       if (this.lastN === undefined || this.lastN === null) {
         this.lastN = n;
+        // Setting an initial angle.
         this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(THREE.Math.degToRad(12) ));
       }
 
@@ -117,7 +123,6 @@ export default class App {
       this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(-1 * Math.abs(n - this.lastN) ));
       this.lastN = n;
     }
-
 
     requestAnimationFrame((time) => this.render(time));
   }
@@ -267,7 +272,7 @@ export default class App {
             // Decreases time to complete the cycle.
             this.cycleTotalMilliseconds = this.cycleTotalMilliseconds - 500;
             // Reset the initialMilliseconds to match current percent around cycle.
-            var tempTimeDifference = this.timePercentage * (this.cycleTotalMilliseconds - 500);
+            var tempTimeDifference = this.timePercentage * (this.cycleTotalMilliseconds);
             this.initialMilliseconds = (new Date()).getTime() - tempTimeDifference;
           }
 
@@ -287,7 +292,7 @@ export default class App {
             // Increases time to complete the cycle.
             this.cycleTotalMilliseconds = this.cycleTotalMilliseconds + 500;
             // Reset the initialMilliseconds as appropriate.
-            var tempTimeDifference = this.timePercentage * (this.cycleTotalMilliseconds + 500);
+            var tempTimeDifference = this.timePercentage * (this.cycleTotalMilliseconds);
             this.initialMilliseconds = (new Date()).getTime() - tempTimeDifference;
           }
 
