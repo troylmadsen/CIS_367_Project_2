@@ -68,7 +68,7 @@ export default class Lighthouse extends Group {
     }
 
     render() {
-        this.lamp.applyMatrix(this.lampRot);
+        this.lamp.matrix.multiply(this.lampRot);
         this.lamp.render();
     }
 }

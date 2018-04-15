@@ -1,7 +1,4 @@
 import * as THREE from 'three';
-// import orbit from 'three-orbit-controls';
-// const OrbitControls = orbit(THREE);
-import TrackballControls from 'three-trackballcontrols';
 import Lighthouse from './models/Lighthouse';
 import Boat from './models/Boat';
 import PlacementGrid from './models/PlacementGrid';
@@ -15,16 +12,9 @@ export default class App {
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(75, 4/3, 0.5, 500);
-    // this.camera.position.z = 100;
     this.camera.matrixAutoUpdate = false;
     var cameraPos = new THREE.Matrix4().makeTranslation(0, 0, 100);
     this.camera.matrixWorld.multiply(cameraPos);
-
-    // Adds mouse camera control.
-    // this.tracker = new TrackballControls(this.camera);
-    // this.tracker.rotateSpeed = 2.0;
-    // this.tracker.noZoom = true;
-    // this.tracker.noPan = false;
 
     // Mouse buttons
     this.STATE = {NONE: -1, LEFT: 0, MIDDLE: 1, RIGHT: 2};
@@ -34,6 +24,13 @@ export default class App {
     this.rotateSpeed = 1;
     this.panSpeed = 1;
     this.zoomSpeed = 1;
+
+    // Which object is being controlled by the mouse
+    this._controlFocus = "camera";
+
+    // Dictionary of controllables for _controlFocus
+    this.CONTROLLABLES = {};
+    this.CONTROLLABLES["camera"] = this.camera;
 
     // Adding skybox.
     const skyboxGeom = new THREE.SphereGeometry(100, 32, 32);
@@ -48,8 +45,10 @@ export default class App {
 
     // Adding lighthouse.
     this.lighthouse = new Lighthouse();
+    this.lighthouse.matrixAutoUpdate = false;
     this.lighthouse.lamp.matrixAutoUpdate = false;
     this.scene.add(this.lighthouse);
+    this.CONTROLLABLES["lighthouse"] = this.lighthouse;
 
     // Adding ambient light.
     const ambientLight = new THREE.AmbientLight(0x404040);
@@ -59,6 +58,7 @@ export default class App {
     this.boat = new Boat(1);
     this.boat.matrixAutoUpdate = false;
     this.scene.add(this.boat);
+    this.CONTROLLABLES["boat"] = this.boat;
 
     // Adding the placement grid.
     this.placementgrid = new PlacementGrid();
@@ -85,7 +85,6 @@ export default class App {
   // Updates for animation.
   render(ts) {
     this.renderer.render(this.scene, this.camera);
-    // this.tracker.update();
 
     // Rotates the Propeller
     this.boat.render();
@@ -160,11 +159,14 @@ export default class App {
       this.mouseup = this.mouseupHandler.bind(this);
       this.mousemove = this.mousemoveHandler.bind(this);
 
-      // Directional light control toggle handler
-      document.getElementById("directionalLightToggle").addEventListener("change", this.toggleDirectionalLightHandler.bind(this));
+      // Radio button control
+      document.getElementById("radioButtons").addEventListener("change", this.radioButtonHandler.bind(this));
 
-      // Spotlight control toggle handler
-      document.getElementById("spotlightToggle").addEventListener("change", this.toggleSpotlightHandler.bind(this));
+      // Directional light control handler
+      document.getElementById("directionalLight").addEventListener("change", this.directionalLightHandler.bind(this));
+
+      // Spotlight control handler
+      document.getElementById("spotlight").addEventListener("change", this.spotlightHandler.bind(this));
   }
 
   // Handles page resizing.
@@ -182,7 +184,6 @@ export default class App {
     this._canvas.top = this._canvas.getBoundingClientRect().top;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
-    // this.tracker.handleResize();
   }
 
   // Handles keyboard events for object control.
@@ -319,10 +320,18 @@ export default class App {
       var direction = event.deltaY;
       if (direction > 0) {
           // Scroll down
-          this.camera.matrixWorld.multiply(new THREE.Matrix4().makeTranslation(0, 0, 3 * this.zoomSpeed));
+          if (this._controlFocus === "camera") {
+              this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeTranslation(0, 0, 3 * this.zoomSpeed));
+          } else {
+              this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeTranslation(0, 0, 3 * this.zoomSpeed));
+          }
       } else {
           // Scroll up
-          this.camera.matrixWorld.multiply(new THREE.Matrix4().makeTranslation(0, 0, -3 * this.zoomSpeed));
+          if (this._controlFocus === "camera") {
+              this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeTranslation(0, 0, -3 * this.zoomSpeed));
+          } else {
+              this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeTranslation(0, 0, -3 * this.zoomSpeed));
+          }
       }
   }
 
@@ -352,14 +361,27 @@ export default class App {
       if (this._state === this.STATE.LEFT) {
           var rotX = new THREE.Matrix4().makeRotationX(deltaY * Math.PI * this.rotateSpeed);
           var rotY = new THREE.Matrix4().makeRotationY(deltaX * Math.PI * this.rotateSpeed);
-          this.camera.matrixWorld.multiply(rotX);
-          this.camera.matrixWorld.multiply(rotY);
+          if (this._controlFocus === "camera") {
+              this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeRotationX(deltaY * Math.PI * this.rotateSpeed));
+              this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeRotationY(deltaX * Math.PI * this.rotateSpeed));
+          } else {
+              this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeRotationX(-1 * deltaY * Math.PI * this.rotateSpeed));
+              this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeRotationY(-1 * deltaX * Math.PI * this.rotateSpeed));
+          }
       } else if (this._state === this.STATE.MIDDLE) {
           var rotZ = new THREE.Matrix4().makeRotationZ(deltaX * Math.PI * this.rotateSpeed);
-          this.camera.matrixWorld.multiply(rotZ);
+          if (this._controlFocus === "camera") {
+              this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeRotationZ(deltaX * Math.PI * this.rotateSpeed));
+          } else {
+              this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeRotationZ(-1 * deltaX * Math.PI * this.rotateSpeed));
+          }
       } else if (this._state === this.STATE.RIGHT) {
           var pan = new THREE.Matrix4().makeTranslation(-100 * deltaX * this.panSpeed, 100 * deltaY * this.panSpeed, 0);
-          this.camera.matrixWorld.multiply(pan);
+          if (this._controlFocus === "camera") {
+              this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeTranslation(-100 * deltaX * this.panSpeed, 100 * deltaY * this.panSpeed, 0));
+          } else {
+              this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeTranslation(100 * deltaX * this.panSpeed, 100 * deltaY * this.panSpeed, 0));
+          }
       }
   }
 
@@ -372,11 +394,21 @@ export default class App {
       this._canvas.removeEventListener('mouseup', this.mouseup);
   }
 
-  toggleDirectionalLightHandler(event) {
+  radioButtonHandler(event) {
+      var buts = document.getElementById("radioButtons");
+      for (var i = 0; i < buts.length; i++) {
+          if (buts[i].checked) {
+              this._controlFocus = buts[i].value;
+              break;
+          }
+      }
+  }
+
+  directionalLightHandler(event) {
       this.directionalLight.visible = !this.directionalLight.visible;
   }
 
-  toggleSpotlightHandler(event) {
+  spotlightHandler(event) {
       this.lighthouse.lamp.spotlight.visible = !this.lighthouse.lamp.spotlight.visible;
   }
 }
