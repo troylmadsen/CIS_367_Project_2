@@ -11,7 +11,7 @@ export default class Boat extends Group {
         var BODY_RADIUS = 3 * scale;
         const bodyGeom = new CylinderGeometry(BODY_RADIUS, BODY_RADIUS, BODY_LENGTH, 32, 1, true, Math.PI / 2, Math.PI);
         const bodyMatr = new MeshPhongMaterial({
-            ambient: 0x313131, // ambient is (0.192250, 0.192250, 0.192250)
+            // ambient: 0x313131, // ambient is (0.192250, 0.192250, 0.192250)
             color: 0x818181, // diffuse is (0.507540, 0.507540, 0.507540)
             specular: 0x828282, // specular is (0.508273, 0.508273, 0.508273)
             shininess: 51.200001,
@@ -25,7 +25,7 @@ export default class Boat extends Group {
         var NOSE_LENGTH = 2 * BODY_LENGTH / 5;
         const noseGeom = new ConeGeometry(BODY_RADIUS, NOSE_LENGTH, 32, 1, true, 3 * Math.PI / 2, Math.PI);
         const noseMatr = new MeshPhongMaterial({
-            ambient: 0x313131, // ambient is (0.192250, 0.192250, 0.192250)
+            // ambient: 0x313131, // ambient is (0.192250, 0.192250, 0.192250)
             color: 0x818181, // diffuse is (0.507540, 0.507540, 0.507540)
             specular: 0x828282, // specular is (0.508273, 0.508273, 0.508273)
             shininess: 51.200001,
@@ -40,7 +40,7 @@ export default class Boat extends Group {
         var BACK_LENGTH = 0.1;
         const backGeom = new CylinderGeometry(BODY_RADIUS, BODY_RADIUS, BACK_LENGTH, 32, 1, false, Math.PI / 2, Math.PI);
         const backMatr = new MeshPhongMaterial({
-            ambient: 0x313131, // ambient is (0.192250, 0.192250, 0.192250)
+            // ambient: 0x313131, // ambient is (0.192250, 0.192250, 0.192250)
             color: 0x818181, // diffuse is (0.507540, 0.507540, 0.507540)
             specular: 0x828282, // specular is (0.508273, 0.508273, 0.508273)
             shininess: 51.200001,
@@ -58,8 +58,6 @@ export default class Boat extends Group {
         this.prop.matrixAutoUpdate = false;
         this.prop.applyMatrix(new Matrix4().makeTranslation(0, this.prop.ROD_RADIUS, 0));
         this.prop.applyMatrix(new Matrix4().makeTranslation(0, 0, -1 * BODY_LENGTH / 2 - this.prop.ROD_LENGTH / 2));
-        // this.prop.translateY(this.prop.ROD_RADIUS);
-        // this.prop.translateZ(-1 * BODY_LENGTH / 2 - this.prop.ROD_LENGTH / 2);
         this.add(this.prop);
 
         var propRotRad = THREE.Math.degToRad(3);
@@ -67,9 +65,6 @@ export default class Boat extends Group {
     }
 
     render() {
-        // Rotates the propeller
-        // this.prop.applyMatrix(this.propRot);
         this.prop.matrix.multiply(this.propRot);
-        this.prop.render();
     }
 }

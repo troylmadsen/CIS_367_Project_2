@@ -12,7 +12,7 @@ export default class Lamp extends Group {
         this.STAND_SIZE = 2 * STAND_SCALE * scale;
         const standGeom = new CylinderGeometry(this.STAND_SIZE, this.STAND_SIZE, this.STAND_HEIGHT, 32);
         const standMatr = new MeshPhongMaterial({
-            ambient: 0x543907, // ambient is (0.329412, 0.223529, 0.027451)
+            // ambient: 0x543907, // ambient is (0.329412, 0.223529, 0.027451)
             color: 0xc7911d, // diffuse is (0.780392, 0.568627, 0.113725)
             specular: 0xfdf0ce, // specular is (0.992157, 0.941176, 0.807843)
             shininess: 27.897400
@@ -30,7 +30,7 @@ export default class Lamp extends Group {
         // DoubleSide allows for rendering the inside and outside object
         // https://stackoverflow.com/questions/10287186/is-there-a-backface-visibility-equivalent-for-three-js
         const focusMatr = new MeshPhongMaterial({
-            ambient: 0x543907, // ambient is (0.329412, 0.223529, 0.027451)
+            // ambient: 0x543907, // ambient is (0.329412, 0.223529, 0.027451)
             color: 0xc7911d, // diffuse is (0.780392, 0.568627, 0.113725)
             specular: 0xfdf0ce, // specular is (0.992157, 0.941176, 0.807843)
             shininess: 27.897400,

@@ -8,22 +8,32 @@ import PlacementGrid from './models/PlacementGrid';
 
 export default class App {
   constructor() {
-    const c = document.getElementById('mycanvas');
+    this._canvas = document.getElementById('mycanvas');
 
     // Enable antialias for smoother lines.
-    this.renderer = new THREE.WebGLRenderer({canvas: c, antialias: true});
+    this.renderer = new THREE.WebGLRenderer({canvas: this._canvas, antialias: true});
+
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(75, 4/3, 0.5, 500);
-    this.camera.position.z = 100;
+    // this.camera.position.z = 100;
+    this.camera.matrixAutoUpdate = false;
+    var cameraPos = new THREE.Matrix4().makeTranslation(0, 0, 100);
+    this.camera.matrixWorld.multiply(cameraPos);
 
     // Adds mouse camera control.
-    this.tracker = new TrackballControls(this.camera);
-    this.tracker.rotateSpeed = 2.0;
-    this.tracker.noZoom = false;
-    this.tracker.noPan = false;
+    // this.tracker = new TrackballControls(this.camera);
+    // this.tracker.rotateSpeed = 2.0;
+    // this.tracker.noZoom = true;
+    // this.tracker.noPan = false;
 
-    // Keyboard Listener
-    window.addEventListener("keydown", this.keydownHandler.bind(this));
+    // Mouse buttons
+    this.STATE = {NONE: -1, LEFT: 0, MIDDLE: 1, RIGHT: 2};
+    this._state = this.STATE.NONE;
+
+    // Control speeds
+    this.rotateSpeed = 1;
+    this.panSpeed = 1;
+    this.zoomSpeed = 1;
 
     // Adding skybox.
     const skyboxGeom = new THREE.SphereGeometry(100, 32, 32);
@@ -32,9 +42,9 @@ export default class App {
     this.scene.add(skybox);
 
     // Adding directional light.
-    const lightOne = new THREE.DirectionalLight(0xffffff, 1.0);
-    lightOne.position.set(10, 40, 100);
-    this.scene.add(lightOne);
+    this.directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    this.directionalLight.position.set(10, 40, 100);
+    this.scene.add(this.directionalLight);
 
     // Adding lighthouse.
     this.lighthouse = new Lighthouse();
@@ -60,9 +70,7 @@ export default class App {
     this.initialMilliseconds = (new Date()).getTime();
     this.cycleTotalMilliseconds = 10000;
 
-    this.addListeners();
-
-    window.addEventListener('resize', () => this.resizeHandler());
+    this.addHandlers();
     this.resizeHandler();
     requestAnimationFrame((time) => this.render(time));
   }
@@ -70,7 +78,7 @@ export default class App {
   // Updates for animation.
   render(ts) {
     this.renderer.render(this.scene, this.camera);
-    this.tracker.update();
+    // this.tracker.update();
 
     // Rotates the Propeller
     this.boat.render();
@@ -109,8 +117,67 @@ export default class App {
     requestAnimationFrame((time) => this.render(time));
   }
 
+  getMouseLocation(pageX, pageY) {
+      var locVec = new THREE.Vector2();
+
+      locVec.set(
+          (pageX - this._canvas.left) / this._canvas.width,
+          (pageY - this._canvas.top) / this._canvas.height
+      );
+
+      return locVec;
+  }
+
+  addHandlers() {
+      // Disable right-click for canvas
+      this._canvas.oncontextmenu = function(e) {
+          return false
+      };
+
+      // Resize handler
+      window.addEventListener('resize', () => this.resizeHandler());
+
+      // Keyboard handler
+      this.keydown = this.keydownHandler.bind(this);
+      this.keyup = this.keyupHandler.bind(this);
+      window.addEventListener("keydown", this.keydown);
+      window.addEventListener("keyup", this.keyup);
+
+      // Mouse control handlers
+      this._canvas.addEventListener("wheel", this.wheelHandler.bind(this));
+      this.mousedown = this.mousedownHandler.bind(this);
+      this._canvas.addEventListener("mousedown", this.mousedown);
+      this.mouseup = this.mouseupHandler.bind(this);
+      this.mousemove = this.mousemoveHandler.bind(this);
+
+      // Directional light control toggle handler
+      document.getElementById("directionalLightToggle").addEventListener("change", this.toggleDirectionalLightHandler.bind(this));
+
+      // Spotlight control toggle handler
+      document.getElementById("spotlightToggle").addEventListener("change", this.toggleSpotlightHandler.bind(this));
+  }
+
+  // Handles page resizing.
+  resizeHandler() {
+    // const canvas = document.getElementById("mycanvas");
+    let w = window.innerWidth - 16;
+    let h = 0.75 * w;  /* maintain 4:3 ratio */
+    if (this._canvas.offsetTop + h > window.innerHeight) {
+      h = window.innerHeight - this._canvas.offsetTop - 16;
+      w = 4/3 * h;
+    }
+    this._canvas.width = w;
+    this._canvas.height = h;
+    this._canvas.left = this._canvas.getBoundingClientRect().left;
+    this._canvas.top = this._canvas.getBoundingClientRect().top;
+    this.camera.updateProjectionMatrix();
+    this.renderer.setSize(w, h);
+    // this.tracker.handleResize();
+  }
+
   // Handles keyboard events for object control.
   keydownHandler(event) {
+    window.removeEventListener("keydown", this.keydown);
 
     var whichRadio = "";
     if (document.getElementById('boat_but').checked == true) {
@@ -180,28 +247,75 @@ export default class App {
     }
   }
 
-  // Handles page resizing.
-  resizeHandler() {
-    const canvas = document.getElementById("mycanvas");
-    let w = window.innerWidth - 16;
-    let h = 0.75 * w;  /* maintain 4:3 ratio */
-    if (canvas.offsetTop + h > window.innerHeight) {
-      h = window.innerHeight - canvas.offsetTop - 16;
-      w = 4/3 * h;
-    }
-    canvas.width = w;
-    canvas.height = h;
-    this.camera.updateProjectionMatrix();
-    this.renderer.setSize(w, h);
-    this.tracker.handleResize();
+  // Handles keyup events by readding the keydown handler
+  keyupHandler(event) {
+      window.addEventListener('keydown', this.keydown);
   }
 
-  addListeners() {
-      var directionalToggle = document.getElementById("directionalToggle");
-      directionalToggle.addEventListener("change", this.toggleLight);
+  // Handles wheel events by zooming the camera forward or backward depending on
+  // wheel direction
+  wheelHandler(event) {
+      var direction = event.deltaY;
+      if (direction > 0) {
+          // Scroll down
+          this.camera.matrixWorld.multiply(new THREE.Matrix4().makeTranslation(0, 0, 3 * this.zoomSpeed));
+      } else {
+          // Scroll up
+          this.camera.matrixWorld.multiply(new THREE.Matrix4().makeTranslation(0, 0, -3 * this.zoomSpeed));
+      }
   }
 
-  toggleLight(event) {
-      console.log(this.lightOne.toJSON());
+  // Handles mousedown events by adding the mouseup and mousemove handlers and
+  // determines which mouse button was pressed
+  mousedownHandler(event) {
+
+      // Set mouse state
+      if (this._state === this.STATE.NONE) {
+          this._state = event.button;
+      }
+
+      this._moveCurr = this.getMouseLocation(event.pageX, event.pageY);
+
+      this._canvas.addEventListener('mousemove', this.mousemove);
+      this._canvas.addEventListener('mouseup', this.mouseup);
+  }
+
+  // Hanldes mousemove events
+  mousemoveHandler(event) {
+      this._movePrev = this._moveCurr;
+      this._moveCurr = this.getMouseLocation(event.pageX, event.pageY);
+      var deltaX = this._moveCurr.x - this._movePrev.x;
+      var deltaY = this._moveCurr.y - this._movePrev.y;
+
+      // Take appropriate action depending on button
+      if (this._state === this.STATE.LEFT) {
+          var rotX = new THREE.Matrix4().makeRotationX(deltaY * Math.PI * this.rotateSpeed);
+          var rotY = new THREE.Matrix4().makeRotationY(deltaX * Math.PI * this.rotateSpeed);
+          this.camera.matrixWorld.multiply(rotX);
+          this.camera.matrixWorld.multiply(rotY);
+      } else if (this._state === this.STATE.MIDDLE) {
+          var rotZ = new THREE.Matrix4().makeRotationZ(deltaX * Math.PI * this.rotateSpeed);
+          this.camera.matrixWorld.multiply(rotZ);
+      } else if (this._state === this.STATE.RIGHT) {
+          var pan = new THREE.Matrix4().makeTranslation(-100 * deltaX * this.panSpeed, 100 * deltaY * this.panSpeed, 0);
+          this.camera.matrixWorld.multiply(pan);
+      }
+  }
+
+  // Handles mouseup events
+  mouseupHandler(event) {
+      // Restore mouse to no state
+      this._state = this.STATE.NONE;
+
+      this._canvas.removeEventListener('mousemove', this.mousemove);
+      this._canvas.removeEventListener('mouseup', this.mouseup);
+  }
+
+  toggleDirectionalLightHandler(event) {
+      this.directionalLight.visible = !this.directionalLight.visible;
+  }
+
+  toggleSpotlightHandler(event) {
+      this.lighthouse.lamp.spotlight.visible = !this.lighthouse.lamp.spotlight.visible;
   }
 }
