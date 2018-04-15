@@ -1,7 +1,4 @@
 import * as THREE from 'three';
-// import orbit from 'three-orbit-controls';
-// const OrbitControls = orbit(THREE);
-import TrackballControls from 'three-trackballcontrols';
 import Lighthouse from './models/Lighthouse';
 import Boat from './models/Boat';
 import PlacementGrid from './models/PlacementGrid';
@@ -15,16 +12,9 @@ export default class App {
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera(75, 4/3, 0.5, 500);
-    // this.camera.position.z = 100;
     this.camera.matrixAutoUpdate = false;
     var cameraPos = new THREE.Matrix4().makeTranslation(0, 0, 100);
     this.camera.matrixWorld.multiply(cameraPos);
-
-    // Adds mouse camera control.
-    // this.tracker = new TrackballControls(this.camera);
-    // this.tracker.rotateSpeed = 2.0;
-    // this.tracker.noZoom = true;
-    // this.tracker.noPan = false;
 
     // Mouse buttons
     this.STATE = {NONE: -1, LEFT: 0, MIDDLE: 1, RIGHT: 2};
@@ -78,7 +68,6 @@ export default class App {
   // Updates for animation.
   render(ts) {
     this.renderer.render(this.scene, this.camera);
-    // this.tracker.update();
 
     // Rotates the Propeller
     this.boat.render();
@@ -172,7 +161,6 @@ export default class App {
     this._canvas.top = this._canvas.getBoundingClientRect().top;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(w, h);
-    // this.tracker.handleResize();
   }
 
   // Handles keyboard events for object control.
