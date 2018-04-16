@@ -67,7 +67,7 @@ export default class App {
     this.placementgrid.position.y = -25;
 
     // Use real-time to aid boat circuit.
-    this.initialMilliseconds = (new Date()).getTime() + 5000;
+    this.initialMilliseconds = (new Date()).getTime();
     this.cycleTotalMilliseconds = 10000;
     this.isBoatMoving = false;
     this.timeDifference = 0;
@@ -76,6 +76,7 @@ export default class App {
     var boatXPosition = 52 * Math.cos(0);
     var boatYPosition = 30 * Math.sin(0);
     this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, -24, boatYPosition));
+    this.beginningRevolution = true;
 
     this.addHandlers();
     this.resizeHandler();
@@ -83,7 +84,7 @@ export default class App {
   }
 
   // Updates for animation.
-  render(ts) {
+  render() {
     this.renderer.render(this.scene, this.camera);
 
     // Rotates the Propeller
@@ -94,6 +95,23 @@ export default class App {
 
     // Controlling the position of the boat to a cycle.
     if (this.isBoatMoving == true) {
+
+      // If in the beginning half of revolution.
+      if (this.beginningRevolution == true) {
+
+        if (this.timePercentage > 0.5) {
+          this.beginningRevolution = false;
+        }
+      // If in the last half of revolution
+      } else if (this.beginningRevolution == false) {
+        if (this.timePercentage < 0.5) {
+          this.beginningRevolution = true;
+
+          // Resets the rotation to default once per revolution.
+          // This mitigates some rotation error from rounding issues.
+          this.boat.matrix.makeRotationY(0);
+        }
+      }
 
       this.newMilliSecondTime = (new Date()).getTime();
       this.timeDifference = this.newMilliSecondTime - this.initialMilliseconds;
