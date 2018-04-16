@@ -32,11 +32,18 @@ export default class App {
         this.CONTROLLABLES = {};
         this.CONTROLLABLES["camera"] = this.camera;
 
-        // Adding skybox.
+        // Adding skybox
         const skyboxGeom = new THREE.SphereGeometry(100, 32, 32);
         const skyboxMatr = new THREE.MeshPhongMaterial({color: 0xff00ff, side: THREE.BackSide});
         const skybox = new THREE.Mesh(skyboxGeom, skyboxMatr);
         this.scene.add(skybox);
+
+        // Adding water
+        const waterGeom = new THREE.CylinderGeometry(100, 100, 1, 32);
+        const waterMatr = new THREE.MeshPhongMaterial({color: 0x4014df});
+        const water = new THREE.Mesh(waterGeom, waterMatr);
+        water.translateY(-50);
+        this.scene.add(water);
 
         // Adding directional light.
         this.directionalLight = new THREE.DirectionalLight(0xffffff, 1.0);
@@ -60,12 +67,14 @@ export default class App {
         this.scene.add(this.boat);
         this.CONTROLLABLES["boat"] = this.boat;
 
-        // Set initial boat-positioning.
+        // Set animation controls
+        this.isBoatMoving = false;
+        this.boatHeight = -49.5;
         this.animSteps = 1000;
         this.stepCounter = 0;
         var boatXPosition = 52 * Math.cos(this.stepCounter / this.animSteps * 2 * Math.PI);
         var boatZPosition = 30 * Math.sin(this.stepCounter / this.animSteps * 2 * Math.PI);
-        this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, -24, boatZPosition));
+        this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, this.boatHeight, boatZPosition));
         this.prevDir = Math.atan2(boatXPosition, boatZPosition);
 
         this.addHandlers();
@@ -96,7 +105,7 @@ export default class App {
             var newDir = Math.atan2(boatXPosition, boatZPosition);
             var deltaDir = newDir - this.prevDir;
 
-            this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, -24, boatZPosition));
+            this.boat.matrix.setPosition(new THREE.Vector3(boatXPosition, this.boatHeight, boatZPosition));
             this.boat.matrix.multiply(new THREE.Matrix4().makeRotationY(deltaDir));
             this.prevDir = newDir;
 
