@@ -195,46 +195,6 @@ export default class App {
     var keycode = event.keyCode || event.which;
     switch (keycode) {
 
-      // LEFT
-      case 37:
-        console.log("LEFT");
-        if (whichRadio == "boat") {
-          console.log("BOAT");
-        } else if (whichRadio == "lighthouse") {
-          console.log("LIGHTHOUSE");
-        }
-        break;
-
-      // RIGHT
-      case 39:
-        console.log("RIGHT");
-        if (whichRadio == "boat") {
-          console.log("BOAT");
-        } else if (whichRadio == "lighthouse") {
-          console.log("LIGHTHOUSE");
-        }
-        break;
-
-      // UP
-      case 38:
-        console.log("UP");
-        if (whichRadio == "boat") {
-          console.log("BOAT");
-        } else if (whichRadio == "lighthouse") {
-          console.log("LIGHTHOUSE");
-        }
-        break;
-
-      // DOWN
-      case 40:
-        console.log("DOWN");
-        if (whichRadio == "boat") {
-          console.log("BOAT");
-        } else if (whichRadio == "lighthouse") {
-          console.log("LIGHTHOUSE");
-        }
-        break;
-
       // SPACE
       case 32:
         console.log("SPACE");
