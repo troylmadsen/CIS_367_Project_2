@@ -194,53 +194,9 @@ export default class App {
 
     var keycode = event.keyCode || event.which;
     switch (keycode) {
-
-      // LEFT
-      case 37:
-        console.log("LEFT");
-        if (whichRadio == "boat") {
-          console.log("BOAT");
-        } else if (whichRadio == "lighthouse") {
-          console.log("LIGHTHOUSE");
-        }
-        break;
-
-      // RIGHT
-      case 39:
-        console.log("RIGHT");
-        if (whichRadio == "boat") {
-          console.log("BOAT");
-        } else if (whichRadio == "lighthouse") {
-          console.log("LIGHTHOUSE");
-        }
-        break;
-
-      // UP
-      case 38:
-        console.log("UP");
-        if (whichRadio == "boat") {
-          console.log("BOAT");
-        } else if (whichRadio == "lighthouse") {
-          console.log("LIGHTHOUSE");
-        }
-        break;
-
-      // DOWN
-      case 40:
-        console.log("DOWN");
-        if (whichRadio == "boat") {
-          console.log("BOAT");
-        } else if (whichRadio == "lighthouse") {
-          console.log("LIGHTHOUSE");
-        }
-        break;
-
       // SPACE
       case 32:
-        console.log("SPACE");
         if (whichRadio == "boat") {
-          console.log("BOAT");
-
           // Toggle boat movement.
           if (this.isBoatMoving == true) {
             // Stops the rendering of the boat path animation.
@@ -251,18 +207,12 @@ export default class App {
             // Allow the render to start the animation.
             this.isBoatMoving = true;
           }
-
-        } else if (whichRadio == "lighthouse") {
-          console.log("LIGHTHOUSE");
         }
         break;
 
       // EQUALS (or PLUS)
       case 187:
-        console.log("PLUS");
         if (whichRadio == "boat") {
-          console.log("BOAT");
-
           // Increase the speed of the boat's revolution to a limit.
           if (this.cycleTotalMilliseconds > 1000) {
             // Decreases time to complete the cycle.
@@ -271,18 +221,12 @@ export default class App {
             var tempTimeDifference = this.timePercentage * (this.cycleTotalMilliseconds - 500);
             this.initialMilliseconds = (new Date()).getTime() - tempTimeDifference;
           }
-
-        } else if (whichRadio == "lighthouse") {
-          console.log("LIGHTHOUSE");
         }
         break;
 
       // DASH (or MINUS)
       case 189:
-        console.log("MINUS");
         if (whichRadio == "boat") {
-          console.log("BOAT");
-
           // Decrease the speed of the boat's revolution to a limit.
           if (this.cycleTotalMilliseconds < 20000) {
             // Increases time to complete the cycle.
@@ -291,16 +235,8 @@ export default class App {
             var tempTimeDifference = this.timePercentage * (this.cycleTotalMilliseconds + 500);
             this.initialMilliseconds = (new Date()).getTime() - tempTimeDifference;
           }
-
-        } else if (whichRadio == "lighthouse") {
-          console.log("LIGHTHOUSE");
         }
         break;
-
-
-      // DEFAULT
-      default:
-        console.log("SOMEKEY");
     }
   }
 
@@ -354,8 +290,6 @@ export default class App {
 
       // Take appropriate action depending on button
       if (this._state === this.STATE.LEFT) {
-          var rotX = new THREE.Matrix4().makeRotationX(deltaY * Math.PI * this.rotateSpeed);
-          var rotY = new THREE.Matrix4().makeRotationY(deltaX * Math.PI * this.rotateSpeed);
           if (this._controlFocus === "camera") {
               this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeRotationX(deltaY * Math.PI * this.rotateSpeed));
               this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeRotationY(deltaX * Math.PI * this.rotateSpeed));
@@ -364,14 +298,12 @@ export default class App {
               this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeRotationY(-1 * deltaX * Math.PI * this.rotateSpeed));
           }
       } else if (this._state === this.STATE.MIDDLE) {
-          var rotZ = new THREE.Matrix4().makeRotationZ(deltaX * Math.PI * this.rotateSpeed);
           if (this._controlFocus === "camera") {
               this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeRotationZ(deltaX * Math.PI * this.rotateSpeed));
           } else {
               this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeRotationZ(-1 * deltaX * Math.PI * this.rotateSpeed));
           }
       } else if (this._state === this.STATE.RIGHT) {
-          var pan = new THREE.Matrix4().makeTranslation(-100 * deltaX * this.panSpeed, 100 * deltaY * this.panSpeed, 0);
           if (this._controlFocus === "camera") {
               this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeTranslation(-100 * deltaX * this.panSpeed, 100 * deltaY * this.panSpeed, 0));
           } else {
