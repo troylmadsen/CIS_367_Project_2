@@ -260,6 +260,24 @@ export default class App {
           }
         }
         break;
+
+      // "1"
+      case 49:
+        this.directionalLight.position.set(10, 40, 100);
+        this.directionalLight.rotation.set(0, 0, 0);
+        break;
+
+      // "2"
+      case 50:
+        this.directionalLight.position.set(0, 0, 50);
+        this.directionalLight.rotation.set(0, 90, 30);
+        break;
+
+      // "3"
+      case 51:
+        this.directionalLight.position.set(-20, 20, 50);
+        this.directionalLight.rotation.set(10, 10, 30);
+        break;
     }
   }
 
