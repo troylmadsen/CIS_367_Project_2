@@ -28,20 +28,43 @@
 </style>
 
 <body>
-    <p>Troy Madsen</p>
-    <p>Mouse: Left = rotate, Middle = zoom, Right = pan</p>
-    <p>Control Different Objects with "WASD":</p>
-    <p>
-        Lighthouse: <input type="radio" id="lighthouse_but" name="whichObject" value="lighthouse"> <br/>
-        Boat: <input type="radio" id="boat_but" name="whichObject" value="boat"> <br/>
+    <p>Troy Madsen and Brendon Murthum</p>
+    <p><b>Object Controls</b> Control an object by selecting its respective radio-button, then dragging with the mouse.</p>
+    <p>Mouse: Left = Rotate X/Y, Middle = Rotate Z, Right = Pan X/Y, Scroll = Pan Z</p>
+    <p><b>Boat Controls:</b> While selecting the radio button for the boat, the space-bar will pause the boat's
+       revolution-cycle and its rotation, while the plus (+) and minus (-) keys will increase and decrease its speed.</p>
+    <p><b>Lighting Position Controls:</b> At any time, pressing the keys "1", "2", or "3" will switch the position and
+        rotation of the directional light between three different cases.
     </p>
-    <div>
-        <input id="directionalToggle" type="checkbox">
-        <label for="directionalToggle">Directional Toggle</label>
-    </div>
+    <p>
+        <form id="radioButtons">
+            <div>
+                <input type="radio" id="camera_but" name= "whichObject" value="camera" checked>
+                <label for="camera_but">Camera</label> <br/>
+            </div>
+            <div>
+                <input type="radio" id="lighthouse_but" name="whichObject" value="lighthouse">
+                <label for="lighthouse_but">Lighthouse</label> <br/>
+            </div>
+            <div>
+                <input type="radio" id="boat_but" name="whichObject" value="boat">
+                <label for="boat_but">Boat</label> <br/>
+            </div>
+        </form>
+    </p>
+    <p>
+        <div>
+            <input id="directionalLight" type="checkbox" checked>
+            <label for="directionalLight">Directional Light</label>
+        </div>
+        <div>
+            <input id="spotlight" type="checkbox" checked>
+            <label for="spotlight">Spotlight</label>
+        </div>
+    </p>
     <div id="container">
-      <canvas id="mycanvas"></canvas>
-  </div>
+        <canvas id="mycanvas"></canvas>
+    </div>
 <script type="text/javascript" src="bundle.js"></script></body>
 
 </html>

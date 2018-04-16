@@ -14,40 +14,45 @@ var BUILD_PATH    = path.resolve(ROOT_PATH, 'dist');
 var debug = process.env.NODE_ENV !== 'production';
 
 module.exports = {
-  entry: ENTRY_PATH,
+    entry: ENTRY_PATH,
 
-  output: {
-    path: BUILD_PATH,
-    filename: 'bundle.js'
-  },
-  plugins: [
-    /*
-    HTML webpack plugin generates <script> and <link> tags
-    and merges them into our starter template HTML
-    */
-    new HtmlWebpackPlugin({
-      title: 'WebGL Three.js Starter', // Goes under <title> of the generated HTML
-      template: TEMPLATE_PATH,           // Template HTML to use
-      inject: 'body'                     // Inject the <script> tags in <body>
-    })
-  ],
-  module: {
-    loaders: [
-      {
-        test: /\.js$/,
-        include: JS_PATH,
-        exclude: /(node_module|bower_components)/,
-        loader: 'babel-loader',
-        query: {
-          cacheDirectory: true
-        }
-      },
-      // {
-      //   test: /\.glsl$/,
-      //   include: SHADER_PATH,
-      //   loader: 'webpack-glsl-loader'
-      // }
-    ]
-  },
-  //devtool: 'source-map'
+    output: {
+        path: BUILD_PATH,
+        filename: 'bundle.js'
+    },
+    plugins: [
+        /*
+        HTML webpack plugin generates <script> and <link> tags
+        and merges them into our starter template HTML
+        */
+        new HtmlWebpackPlugin({
+            title: 'WebGL Three.js Starter', // Goes under <title> of the generated HTML
+            template: TEMPLATE_PATH,           // Template HTML to use
+            inject: 'body'                     // Inject the <script> tags in <body>
+        })
+    ],
+    module: {
+        loaders: [
+            {
+                test: /\.js$/,
+                include: JS_PATH,
+                exclude: /(node_module|bower_components)/,
+                loader: 'babel-loader',
+                query: {
+                    cacheDirectory: true
+                }
+            },
+            {                     // additional loader
+                test: /\.(jpg|png|jpeg|gif)$/,
+                include: ROOT_PATH,
+                loader: 'file-loader'
+            },
+            // {
+            //   test: /\.glsl$/,
+            //   include: SHADER_PATH,
+            //   loader: 'webpack-glsl-loader'
+            // }
+        ]
+    },
+    //devtool: 'source-map'
 };
