@@ -279,7 +279,7 @@ export default class App {
           if (this._controlFocus === "camera") {
               this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeTranslation(-100 * deltaX * this.panSpeed, 100 * deltaY * this.panSpeed, 0));
           } else {
-              this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeTranslation(100 * deltaX * this.panSpeed, 100 * deltaY * this.panSpeed, 0));
+              this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeTranslation(100 * deltaX * this.panSpeed, -100 * deltaY * this.panSpeed, 0));
           }
       }
   }
