@@ -60,18 +60,6 @@ export default class App {
         this.scene.add(this.boat);
         this.CONTROLLABLES["boat"] = this.boat;
 
-        // Adding the placement grid.
-        this.placementgrid = new PlacementGrid();
-        this.placementgrid.rotateX(Math.PI / 2);
-        // this.scene.add(this.placementgrid);
-        this.placementgrid.position.y = -25;
-
-        // Use real-time to aid boat circuit.
-        this.initialMilliseconds = (new Date()).getTime() + 5000;
-        this.cycleTotalMilliseconds = 10000;
-        this.isBoatMoving = false;
-        this.timeDifference = 0;
-
         // Set initial boat-positioning.
         this.animSteps = 1000;
         this.stepCounter = 0;
@@ -227,6 +215,24 @@ export default class App {
                 }
             }
             break;
+
+            // "1"
+            case 49:
+            this.directionalLight.position.set(10, 40, 100);
+            this.directionalLight.rotation.set(0, 0, 0);
+            break;
+
+            // "2"
+            case 50:
+            this.directionalLight.position.set(0, 0, 50);
+            this.directionalLight.rotation.set(0, 90, 30);
+            break;
+
+            // "3"
+            case 51:
+            this.directionalLight.position.set(-20, 20, 50);
+            this.directionalLight.rotation.set(10, 10, 30);
+            break;
         }
     }
 
@@ -284,8 +290,8 @@ export default class App {
                 this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeRotationX(deltaY * Math.PI * this.rotateSpeed));
                 this.CONTROLLABLES[this._controlFocus].matrixWorld.multiply(new THREE.Matrix4().makeRotationY(deltaX * Math.PI * this.rotateSpeed));
             } else {
-                this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeRotationX(-1 * deltaY * Math.PI * this.rotateSpeed));
-                this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeRotationY(-1 * deltaX * Math.PI * this.rotateSpeed));
+                this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeRotationX(deltaY * Math.PI * this.rotateSpeed));
+                this.CONTROLLABLES[this._controlFocus].matrix.multiply(new THREE.Matrix4().makeRotationY(deltaX * Math.PI * this.rotateSpeed));
             }
         } else if (this._state === this.STATE.MIDDLE) {
             if (this._controlFocus === "camera") {
